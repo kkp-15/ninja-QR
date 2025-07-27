@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QRハットリくん</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #fefefe;
+      padding: 2rem;
+      text-align: center;
+      color: #333;
+    }
+    h1 {
+      font-size: 2rem;
+      color: #1da1f2;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      font-size: 1rem;
+      color: #666;
+      margin-bottom: 1.5rem;
+    }
+    input, button {
+      padding: 0.6rem;
+      font-size: 1rem;
+      width: 80%;
+      max-width: 400px;
+      margin: 0.5rem auto;
+      display: block;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    #qrcode {
+      margin: 2rem auto;
+    }
+    .follow-section {
+      margin-top: 2rem;
+      border-top: 1px solid #ddd;
+      padding-top: 1rem;
+    }
+    .follow-section a {
+      display: inline-block;
+      background: #1da1f2;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .follow-section a:hover {
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+  <h1>QRハットリくん</h1>
+  <p class="subtitle">ニンニン！URLを入力してQRに変えておいたでござる📜</p>
+
+  <input type="text" id="text" placeholder="https://example.com" />
+  <button onclick="generateQRCode()">生成するでござる！</button>
+
+  <div id="qrcode"></div>
+
+  <div class="follow-section">
+    <p>このアプリを作った忍者はこちら🥷</p>
+    <a href="https://x.com/kkp_webninja" target="_blank">@kkp_webninja をフォロー</a>
+  </div>
+
+  <!-- QRコード生成ライブラリ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    function generateQRCode() {
+      const text = document.getElementById("text").value;
+      const qrcodeContainer = document.getElementById("qrcode");
+      qrcodeContainer.innerHTML = "";
+      if (text.trim() !== "") {
+        new QRCode(qrcodeContainer, {
+          text: text,
+          width: 200,
+          height: 200
+        });
+      }
+    }
+  </script>
+</body>
+</html>
