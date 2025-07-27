@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>QRハットリくん</title>
 
   <!-- Google Analytics -->
@@ -25,14 +25,13 @@
     h1 {
       font-size: 2rem;
       color: #1da1f2;
-      margin-bottom: 0.5rem;
     }
     .subtitle {
       font-size: 1rem;
       color: #666;
       margin-bottom: 1.5rem;
     }
-    input, button {
+    input, select, button {
       padding: 0.6rem;
       font-size: 1rem;
       width: 80%;
@@ -49,6 +48,10 @@
       color: #555;
       font-size: 0.9rem;
       word-break: break-word;
+    }
+    #save-btn {
+      margin-top: 1rem;
+      display: none;
     }
     .follow-section {
       margin-top: 2rem;
@@ -74,34 +77,47 @@
   <p class="subtitle">ニンニン！URLを入力してQRに変えておいたでござる📜</p>
 
   <input type="text" id="text" placeholder="https://example.com" />
+  <select id="size">
+    <option value="200">🔘 200px（名刺・スマホ向け）</option>
+    <option value="300" selected>🔘 300px（万能サイズ）</option>
+    <option value="400">🔘 400px（ポスター用）</option>
+  </select>
   <button onclick="generateQRCode()">生成するでござる！</button>
 
   <div id="qrcode"></div>
   <p id="qr-label"></p>
+  <button id="save-btn" onclick="saveQRCode()">画像を保存する</button>
 
   <div class="follow-section">
     <p>このアプリを作った忍者はこちら🥷</p>
     <a href="https://x.com/kkp_webninja" target="_blank">@kkp_webninja をフォロー</a>
   </div>
 
-  <!-- QRコード生成ライブラリ -->
+  <!-- QRコードライブラリ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
+    let currentQRCodeCanvas = null;
+
     function generateQRCode() {
       const text = document.getElementById("text").value.trim();
+      const size = parseInt(document.getElementById("size").value);
       const qrcodeContainer = document.getElementById("qrcode");
       const qrLabel = document.getElementById("qr-label");
+      const saveBtn = document.getElementById("save-btn");
+
       qrcodeContainer.innerHTML = "";
       qrLabel.textContent = "";
+      currentQRCodeCanvas = null;
+      saveBtn.style.display = "none";
 
       if (text !== "") {
         new QRCode(qrcodeContainer, {
           text: text,
-          width: 200,
-          height: 200
+          width: size,
+          height: size
         });
 
-        // わかりやすく https://, http:// を除去
+        // 表示するリンクの簡易表示
         try {
           const url = new URL(text);
           const displayText = url.hostname + url.pathname;
@@ -109,6 +125,24 @@
         } catch (e) {
           qrLabel.textContent = "🔗 " + text.replace(/^https?:\/\//, '');
         }
+
+        // 生成後にcanvas取得まで少し待つ
+        setTimeout(() => {
+          const canvas = qrcodeContainer.querySelector("canvas");
+          if (canvas) {
+            currentQRCodeCanvas = canvas;
+            saveBtn.style.display = "inline-block";
+          }
+        }, 500);
+      }
+    }
+
+    function saveQRCode() {
+      if (currentQRCodeCanvas) {
+        const link = document.createElement("a");
+        link.download = "qr-hattori.png";
+        link.href = currentQRCodeCanvas.toDataURL("image/png");
+        link.click();
       }
     }
   </script>
