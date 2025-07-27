@@ -43,7 +43,12 @@
       border-radius: 8px;
     }
     #qrcode {
-      margin: 2rem auto;
+      margin: 2rem auto 0.5rem;
+    }
+    #qr-label {
+      color: #555;
+      font-size: 0.9rem;
+      word-break: break-word;
     }
     .follow-section {
       margin-top: 2rem;
@@ -72,6 +77,7 @@
   <button onclick="generateQRCode()">生成するでござる！</button>
 
   <div id="qrcode"></div>
+  <p id="qr-label"></p>
 
   <div class="follow-section">
     <p>このアプリを作った忍者はこちら🥷</p>
@@ -82,15 +88,27 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
     function generateQRCode() {
-      const text = document.getElementById("text").value;
+      const text = document.getElementById("text").value.trim();
       const qrcodeContainer = document.getElementById("qrcode");
+      const qrLabel = document.getElementById("qr-label");
       qrcodeContainer.innerHTML = "";
-      if (text.trim() !== "") {
+      qrLabel.textContent = "";
+
+      if (text !== "") {
         new QRCode(qrcodeContainer, {
           text: text,
           width: 200,
           height: 200
         });
+
+        // わかりやすく https://, http:// を除去
+        try {
+          const url = new URL(text);
+          const displayText = url.hostname + url.pathname;
+          qrLabel.textContent = "🔗 " + displayText;
+        } catch (e) {
+          qrLabel.textContent = "🔗 " + text.replace(/^https?:\/\//, '');
+        }
       }
     }
   </script>
